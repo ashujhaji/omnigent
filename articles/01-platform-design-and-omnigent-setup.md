@@ -168,7 +168,8 @@ sequenceDiagram
 ### 2.4 Why this split?
 
 * **Blast radius.** The worker holds Slack and internal-system credentials;
-  the server holds model keys and session data. Neither needs the other's
+  the server holds session data and runs the agent bundles, which carry
+  their own model keys. Neither needs the other's
   secrets.
 * **Independent scaling.** Add runners for more concurrent sessions; add
   gateway replicas for more Slack traffic. Neither forces the other.
@@ -187,8 +188,8 @@ sequenceDiagram
 
 * Docker + Docker Compose
 * Git
-* An LLM credential: a vendor API key, a subscription login, or an internal
-  LLM gateway URL + key
+* An LLM credential (a vendor API key, or an internal LLM gateway URL + key).
+  It goes into the agent bundles, not the server (see §3.4)
 * Python 3.12 (for the Agent Kit build in Part 2)
 
 ### 3.2 Clone the repo
@@ -234,14 +235,10 @@ services:
     volumes:
       # 1. Your built agent bundles (Agent Kit output — see Part 2), read-only.
       - /absolute/path/to/agent-kit/dist:/agents:ro
-      # 2. Server-side config home: model providers / LLM gateway.
-      - ./server-config:/omnigent-config
     environment:
-      # 3. Register agents: colon-separated in-container paths.
+      # 2. Register agents: colon-separated in-container paths.
       OMNIGENT_BUILTIN_AGENT_DIRS: /agents/router:/agents/triage:/agents/chart
-      # 4. Point Omnigent at the mounted config home.
-      OMNIGENT_CONFIG_HOME: /omnigent-config
-      # 5. Local development only — every request becomes one "local" user.
+      # 3. Local development only — every request becomes one "local" user.
       #    NEVER set this on a shared deployment.
       # OMNIGENT_AUTH_ENABLED: "0"
 ```
@@ -251,30 +248,37 @@ What each change does:
 1. **Bundle mount.** Paths in `OMNIGENT_BUILTIN_AGENT_DIRS` are resolved
    *inside* the container, so the host `dist/` folder has to be mounted
    first. `:ro` because the server only ever reads it.
-2. **Config home.** Mount a folder holding the server's `config.yaml` so
-   model providers survive container rebuilds.
-3. **Agent registration** — see §3.6.
-4. **`OMNIGENT_CONFIG_HOME`** tells Omnigent to read that mounted folder.
-5. **Auth.** For a laptop, single-user mode avoids a login screen. For
+2. **Agent registration** — see §3.6.
+3. **Auth.** For a laptop, single-user mode avoids a login screen. For
    anything shared, keep auth on and configure accounts or OIDC.
 
-Create the provider config referenced above. If your company routes all LLM
-traffic through an internal gateway, declare it once here:
+#### Where do models and LLM keys come from?
+
+Not from Omnigent. There is no server-side provider config to edit. Each
+agent's own `config.yaml` names its harness, model and LLM credentials in the
+`executor` block, and the Agent Kit bakes that into the bundle:
 
 ```yaml
-# deploy/docker/server-config/config.yaml
-providers:
-  company-llm-gateway:
-    kind: gateway
-    default: anthropic
-    anthropic:
-      base_url: https://<your-llm-gateway>
-      api_key: ${COMPANY_LLM_API_KEY}   # keep the real key out of git
+# agents/triage/config.yaml (in the Agent Kit)
+executor:
+  type: omnigent
+  model: sonnet
+  config:
+    harness: claude-sdk
+  auth:
+    type: api_key
+    api_key: ${TRIAGE_LLM_API_KEY}     # placeholder; filled in at build time
+    base_url: https://<your-llm-gateway>
 ```
 
-```bash
-echo '*' > server-config/.gitignore   # never commit provider keys
-```
+So the server stays generic: swapping a model, a vendor or a key is a change
+in the kit and a rebuild, not a server redeploy. Two consequences:
+
+* Every agent can point at a different model, vendor or gateway, and each can
+  have its own key with its own budget and audit trail.
+* The built `dist/` folder contains the real key after a local build. Keep
+  `dist/` out of git, and mount it read-only (as above). Part 2, §9 covers how
+  the substitution works and why CI builds leave the placeholder in place.
 
 ### 3.5 Start the server
 
@@ -416,7 +420,7 @@ them.
 | Agent registered but session fails to start | No runner connected, or the harness CLI isn't installed on the runner. |
 | `name` mismatch / odd agent id | Folder name ≠ `name:` in `config.yaml`. |
 | Edits don't show up | Registration is startup-only — restart, and start a new session. |
-| Model auth errors | Provider config not mounted, `OMNIGENT_CONFIG_HOME` not set, or env placeholder not resolved. |
+| Model auth errors | The bundle still has a literal `${..._LLM_API_KEY}`: the var wasn't set when you ran the kit build. Set it in the kit's `.env`, rebuild, restart. |
 
 ---
 

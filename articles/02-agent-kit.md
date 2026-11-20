@@ -233,10 +233,10 @@ executor:
   model: sonnet
   config:
     harness: claude-sdk
-  # auth:
-  #   type: api_key
-  #   api_key: ${CHART_LLM_API_KEY}   # placeholder only — never a literal
-  #   base_url: https://<your-llm-gateway>
+  auth:                             # model credentials live here, not on the server
+    type: api_key
+    api_key: ${CHART_LLM_API_KEY}   # placeholder only — never a literal
+    base_url: https://<your-llm-gateway>
 
 instructions: AGENTS.md
 
@@ -266,10 +266,13 @@ guardrails:
             : {}
 ```
 
-Because model and harness live here and *only* here, moving an agent from
-`claude-sdk` to `codex` — or splitting a router on one vendor and a reviewer
-sub-agent on another — is a one-block change. That's the "multi-model" half
-of the platform.
+Because model, harness and LLM credentials live here and *only* here, moving
+an agent from `claude-sdk` to `codex` — or splitting a router on one vendor
+and a reviewer sub-agent on another — is a one-block change. That's the
+"multi-model" half of the platform. The Omnigent server has no provider
+config of its own; it runs each bundle with the `auth` the bundle carries.
+Each agent gets its own `<AGENT>_LLM_API_KEY`, so keys can be rotated,
+budgeted and audited per agent.
 
 ### 5.3 `AGENTS.md` — *the system prompt*
 
