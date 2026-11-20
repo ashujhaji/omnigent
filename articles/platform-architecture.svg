@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 640" font-family="Inter, -apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#334155"/>
+    </marker>
+    <style>
+      .t{font-size:17px;font-weight:700;fill:#0f172a}
+      .s{font-size:13px;fill:#475569}
+      .g{font-size:20px;font-weight:800}
+      .l{font-size:13px;fill:#334155;font-weight:600}
+      .box{fill:#fff;stroke:#94a3b8;stroke-width:1.5}
+      .ext{fill:#f1f5f9;stroke:#94a3b8;stroke-width:1.5}
+      .ln{stroke:#334155;stroke-width:2;fill:none;marker-end:url(#a)}
+      .bi{stroke:#334155;stroke-width:2;fill:none;marker-end:url(#a);marker-start:url(#a)}
+    </style>
+  </defs>
+  <rect width="1240" height="640" fill="#fff"/>
+  <text x="620" y="40" text-anchor="middle" class="g" fill="#0f172a">Multi-Agent Platform on Omnigent</text>
+
+  <!-- External, left -->
+  <rect x="40" y="110" width="170" height="70" rx="12" class="ext"/>
+  <text x="125" y="141" text-anchor="middle" class="t">Slack users</text>
+  <text x="125" y="161" text-anchor="middle" class="s">ask in a thread</text>
+
+  <rect x="40" y="350" width="170" height="70" rx="12" class="ext"/>
+  <text x="125" y="381" text-anchor="middle" class="t">Internal systems</text>
+  <text x="125" y="401" text-anchor="middle" class="s">data · logs · tickets</text>
+
+  <!-- Worker -->
+  <rect x="270" y="70" width="300" height="390" rx="16" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="420" y="100" text-anchor="middle" class="g" fill="#14532d">Omnigent Worker</text>
+
+  <rect x="300" y="115" width="240" height="70" rx="12" class="box"/>
+  <text x="420" y="146" text-anchor="middle" class="t">Slack bridge</text>
+  <text x="420" y="166" text-anchor="middle" class="s">thread ↔ session</text>
+
+  <rect x="300" y="235" width="240" height="70" rx="12" class="box"/>
+  <text x="420" y="266" text-anchor="middle" class="t">Eval</text>
+  <text x="420" y="286" text-anchor="middle" class="s">judge &amp; replay sessions</text>
+
+  <rect x="300" y="350" width="240" height="70" rx="12" class="box"/>
+  <text x="420" y="381" text-anchor="middle" class="t">MCP gateway</text>
+  <text x="420" y="401" text-anchor="middle" class="s">shared tools for agents</text>
+
+  <!-- Server -->
+  <rect x="670" y="70" width="320" height="390" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="830" y="100" text-anchor="middle" class="g" fill="#1e3a8a">Omnigent Server</text>
+
+  <rect x="700" y="115" width="260" height="80" rx="12" class="box"/>
+  <text x="830" y="148" text-anchor="middle" class="t">Omnigent server</text>
+  <text x="830" y="168" text-anchor="middle" class="s">API · web UI · sessions</text>
+
+  <rect x="700" y="290" width="260" height="140" rx="12" class="box"/>
+  <text x="830" y="320" text-anchor="middle" class="t">Runner</text>
+  <text x="830" y="340" text-anchor="middle" class="s">runs each agent on its harness</text>
+  <rect x="716" y="362" width="72" height="34" rx="8" fill="#eff6ff" stroke="#93c5fd"/>
+  <text x="752" y="384" text-anchor="middle" class="s">Claude</text>
+  <rect x="794" y="362" width="72" height="34" rx="8" fill="#eff6ff" stroke="#93c5fd"/>
+  <text x="830" y="384" text-anchor="middle" class="s">Codex</text>
+  <rect x="872" y="362" width="72" height="34" rx="8" fill="#eff6ff" stroke="#93c5fd"/>
+  <text x="908" y="384" text-anchor="middle" class="s">Gemini…</text>
+
+  <!-- External, right -->
+  <rect x="1050" y="325" width="160" height="70" rx="12" class="ext"/>
+  <text x="1130" y="356" text-anchor="middle" class="t">LLM providers</text>
+  <text x="1130" y="376" text-anchor="middle" class="s">any model</text>
+
+  <!-- Build -->
+  <rect x="300" y="530" width="240" height="70" rx="12" class="ext"/>
+  <text x="420" y="561" text-anchor="middle" class="t">Agent authors</text>
+  <text x="420" y="581" text-anchor="middle" class="s">Markdown + YAML</text>
+  <rect x="700" y="530" width="260" height="70" rx="12" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="830" y="561" text-anchor="middle" class="t">Agent Kit</text>
+  <text x="830" y="581" text-anchor="middle" class="s">builds agent bundles (dist/)</text>
+
+  <!-- Arrows -->
+  <path d="M212 150 L298 150" class="bi"/>
+  <path d="M542 150 L698 150" class="bi"/>
+  <text x="620" y="140" text-anchor="middle" class="l">sessions</text>
+
+  <path d="M542 262 L698 185" class="ln"/>
+  <text x="555" y="206" class="l">reads &amp; replays</text>
+
+  <path d="M830 197 L830 288" class="bi"/>
+  <text x="840" y="248" class="l">assigns sessions</text>
+
+  <path d="M698 385 L542 385" class="ln"/>
+  <text x="620" y="375" text-anchor="middle" class="l">tool calls</text>
+
+  <path d="M298 385 L212 385" class="ln"/>
+
+  <path d="M962 360 L1048 360" class="ln"/>
+
+  <path d="M542 565 L698 565" class="ln"/>
+  <path d="M990 565 L1020 565 L1020 155 L962 155" class="ln"/>
+  <text x="1028" y="250" class="l">registers</text>
+  <text x="1028" y="266" class="l">agents</text>
+</svg>
