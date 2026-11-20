@@ -105,7 +105,7 @@ from the side, and the **Agent Kit** supplies the agents themselves.
 * **Agent bundles** — folders produced by the Agent Kit (Part 2), mounted
   read-only and registered at startup via `OMNIGENT_BUILTIN_AGENT_DIRS`. The
   server tars each one and stores it content-addressed.
-* **Runner** — an `omnigent host` process. It dials *out* to the server over
+* **Runner** — an `omni host` process. It dials *out* to the server over
   a WebSocket tunnel, so it needs no inbound port. On a session's first turn
   it downloads the agent's bundle (`GET /v1/sessions/{id}/agent/contents`),
   caches it per agent version, and spawns the harness subprocess the agent's
@@ -380,8 +380,8 @@ Sessions execute on a runner. On the server host (or any machine that can
 reach it):
 
 ```bash
-omnigent login http://localhost:8000   # once, when auth is enabled
-omnigent host  http://localhost:8000   # new sessions can now run on this machine
+omni login http://localhost:8000   # once, when auth is enabled
+omni host --server 'http://localhost:8000'   # new sessions can now run on this machine
 ```
 
 The runner connects out over a WebSocket and picks up sessions. Install the
